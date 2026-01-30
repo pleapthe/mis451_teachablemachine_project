@@ -1,5 +1,5 @@
-# Teachable Machine Image Classification
-A Streamlit web app that runs a Teachable Machine image classification model using a webcam.
+# Teachable Machine Card Classification
+A Streamlit web app that runs a Teachable Machine Card classification model using a webcam.
 
 ## Features
 - Real-time webcam prediction
