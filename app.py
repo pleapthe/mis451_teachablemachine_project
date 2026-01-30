@@ -8,6 +8,7 @@ st.set_page_config(
 
 st.title("📷 Teachable Machine Image Classification")
 st.caption("Real-time image classification using your webcam")
+st.caption("Classify your cards in real-time: Paragon Student Card, National ID, & Vaccine Card.")
 
 html_code = """
 <!DOCTYPE html>
@@ -53,7 +54,6 @@ html_code = """
 
 <div class="card">
     <h3>Teachable Machine Card Classification</h3>
-    <p>Description : Classify your cards in real-time: Paragon Student Card, National ID, & Vaccine Card.</p>
 
     <button class="start" onclick="startWebcam()">▶ Start</button>
     <button class="stop" onclick="stopWebcam()">⏹ Stop</button>
