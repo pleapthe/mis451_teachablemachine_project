@@ -1,15 +1,3 @@
-import streamlit as st
-import streamlit.components.v1 as components
-
-st.set_page_config(
-    page_title="Teachable Machine Image Model",
-    layout="centered"
-)
-
-st.title("📷 Teachable Machine Card Classification")
-st.caption("Real-time image classification using your webcam")
-st.caption("Classify your cards in real-time: Paragon Student Card, National ID, & Vaccine Card.")
-
 html_code = """
 <!DOCTYPE html>
 <html>
@@ -48,6 +36,11 @@ html_code = """
             font-size: 18px;
             color: #2563eb;
         }
+        img {
+            max-width: 240px;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
@@ -55,13 +48,18 @@ html_code = """
 <div class="card">
     <h3>Teachable Machine Card Classification</h3>
 
-    <button class="start" onclick="startWebcam()">▶ Start</button>
+    <button class="start" onclick="startWebcam()">▶ Start Webcam</button>
     <button class="stop" onclick="stopWebcam()">⏹ Stop</button>
     <button class="flip" onclick="toggleFlip()">🔄 Flip Camera</button>
+
+    <hr>
+
+    <input type="file" accept="image/*" onchange="handleImageUpload(event)">
 
     <div id="status">Status: Idle</div>
 
     <div id="webcam-container"></div>
+    <img id="uploaded-image"/>
     <div id="top-prediction"></div>
     <div id="label-container"></div>
 </div>
@@ -81,6 +79,12 @@ html_code = """
         const metadataURL = URL + "metadata.json";
         model = await tmImage.load(modelURL, metadataURL);
         maxPredictions = model.getTotalClasses();
+
+        labelContainer = document.getElementById("label-container");
+        labelContainer.innerHTML = "";
+        for (let i = 0; i < maxPredictions; i++) {
+            labelContainer.appendChild(document.createElement("div"));
+        }
     }
 
     async function startWebcam() {
@@ -94,25 +98,19 @@ html_code = """
         await webcam.play();
         isRunning = true;
 
+        document.getElementById("uploaded-image").style.display = "none";
         document.getElementById("webcam-container").innerHTML = "";
         document.getElementById("webcam-container").appendChild(webcam.canvas);
 
-        labelContainer = document.getElementById("label-container");
-        labelContainer.innerHTML = "";
-        for (let i = 0; i < maxPredictions; i++) {
-            labelContainer.appendChild(document.createElement("div"));
-        }
-
-        document.getElementById("status").innerText = "Status: Running";
+        document.getElementById("status").innerText = "Status: Webcam Running";
         window.requestAnimationFrame(loop);
     }
 
-    async function stopWebcam() {
+    function stopWebcam() {
         if (!isRunning) return;
         isRunning = false;
         webcam.stop();
         document.getElementById("status").innerText = "Status: Stopped";
-        document.getElementById("top-prediction").innerText = "";
     }
 
     function toggleFlip() {
@@ -126,12 +124,27 @@ html_code = """
     async function loop() {
         if (!isRunning) return;
         webcam.update();
-        await predict();
+        await predict(webcam.canvas);
         window.requestAnimationFrame(loop);
     }
 
-    async function predict() {
-        const prediction = await model.predict(webcam.canvas);
+    async function handleImageUpload(event) {
+        if (!model) await loadModel();
+
+        stopWebcam();
+
+        const img = document.getElementById("uploaded-image");
+        img.src = URL.createObjectURL(event.target.files[0]);
+        img.style.display = "block";
+
+        img.onload = async () => {
+            document.getElementById("status").innerText = "Status: Image Uploaded";
+            await predict(img);
+        };
+    }
+
+    async function predict(image) {
+        const prediction = await model.predict(image);
 
         let topClass = "";
         let topProb = 0;
@@ -156,14 +169,3 @@ html_code = """
 </body>
 </html>
 """
-
-components.html(html_code, height=650)
-
-st.markdown(
-    """
-    **How to use:**
-    - Click **Start** to enable webcam
-    - Use **Flip Camera** for mirror correction
-    - Click **Stop** to release the camera
-    """
-)
