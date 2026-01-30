@@ -52,7 +52,8 @@ html_code = """
 <body>
 
 <div class="card">
-    <h3>Teachable Machine Image Model</h3>
+    <h3>Teachable Machine Card Classification</h3>
+    <h3>Description : Classify your cards in real-time: Paragon Student Card, National ID, & Vaccine Card.</h3>
 
     <button class="start" onclick="startWebcam()">▶ Start</button>
     <button class="stop" onclick="stopWebcam()">⏹ Stop</button>
