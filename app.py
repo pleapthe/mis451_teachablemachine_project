@@ -6,7 +6,7 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("📷 Teachable Machine Image Classification")
+st.title("📷 Teachable Machine Card Classification")
 st.caption("Real-time image classification using your webcam")
 st.caption("Classify your cards in real-time: Paragon Student Card, National ID, & Vaccine Card.")
 
